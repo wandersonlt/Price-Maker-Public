@@ -2,6 +2,11 @@
 
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
+// Remover qualquer token existente ao carregar a página
+localStorage.removeItem('precificador_token');
+localStorage.removeItem('precificador_usuario');
+localStorage.removeItem('precificador_email');
+
 function abrirModal() {
     document.getElementById('modalAuth').style.display = 'flex';
     switchTab('login');
@@ -96,13 +101,9 @@ async function fazerLogin() {
         const data = await response.json();
         
         if (data.sucesso) {
-            localStorage.setItem('precificador_token', data.token);
-            localStorage.setItem('precificador_usuario', data.usuario_id);
-            localStorage.setItem('precificador_email', email);
-            
             mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
             setTimeout(() => {
-                window.location.href = `${API_URL}/dashboard?token=${data.token}`;
+                window.location.href = `${API_URL}/`;
             }, 1500);
         } else {
             mostrarMensagem('erro', data.mensagem);
@@ -189,28 +190,8 @@ async function enviarRecuperacao() {
     }
 }
 
-async function verificarSessao() {
-    try {
-        const response = await fetch(`${API_URL}/api/verificar-sessao`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.logado) {
-            const token = localStorage.getItem('precificador_token');
-            window.location.href = `${API_URL}/dashboard?token=${token}`;
-        }
-    } catch (error) {
-        console.error('Erro:', error);
-    }
-}
-
-const token = localStorage.getItem('precificador_token');
-if (token) {
-    window.location.href = `${API_URL}/dashboard?token=${token}`;
-} else {
-    verificarSessao();
-}
+// NÃO verificar sessão automaticamente - sempre pedir login
+// Removemos a verificação automática
 
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) fecharModal();
