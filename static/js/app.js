@@ -94,16 +94,20 @@ async function fazerLogin() {
             headers: { 
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
             body: JSON.stringify({ email, senha })
         });
 
         const data = await response.json();
         
         if (data.sucesso) {
+            // Salvar token no localStorage
+            localStorage.setItem('precificador_token', data.token);
+            
             mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
+            
+            // Redirecionar com token na URL
             setTimeout(() => {
-                window.location.href = API_URL;
+                window.location.href = `${API_URL}/?token=${data.token}`;
             }, 1500);
         } else {
             mostrarMensagem('erro', data.mensagem);
@@ -143,7 +147,6 @@ async function fazerCadastro() {
             headers: { 
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
             body: JSON.stringify({ nome, email, senha })
         });
 
@@ -182,7 +185,6 @@ async function enviarRecuperacao() {
             headers: { 
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
             body: JSON.stringify({ email })
         });
 
