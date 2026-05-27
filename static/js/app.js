@@ -2,7 +2,7 @@
 
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
-// Remover qualquer token existente ao carregar a página
+// Limpar qualquer token antigo ao carregar
 localStorage.removeItem('precificador_token');
 localStorage.removeItem('precificador_usuario');
 localStorage.removeItem('precificador_email');
@@ -190,9 +190,7 @@ async function enviarRecuperacao() {
     }
 }
 
-// NÃO verificar sessão automaticamente - sempre pedir login
-// Removemos a verificação automática
-
+// Fechar modal ao clicar fora
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) fecharModal();
 };
