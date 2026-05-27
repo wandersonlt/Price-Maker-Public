@@ -1,3 +1,5 @@
+// static/js/app.js - JavaScript da página pública
+
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
 function abrirModal() {
@@ -100,7 +102,6 @@ async function fazerLogin() {
         
         if (data.sucesso) {
             mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
-            // Recarregar a página para o backend
             setTimeout(() => {
                 window.location.href = API_URL;
             }, 1500);
