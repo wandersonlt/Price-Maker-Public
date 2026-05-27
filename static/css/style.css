@@ -13,12 +13,12 @@ body {
     color: #fff;
 }
 
-/* Navegação responsiva */
+/* ========== NAVBAR ATUALIZADA ========== */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 15px 40px;
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 215, 0, 0.2);
@@ -45,7 +45,7 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 12px;
+    gap: 25px;
     align-items: center;
     flex-wrap: wrap;
 }
@@ -55,26 +55,45 @@ body {
     text-decoration: none;
     transition: color 0.3s ease;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .nav-links a:hover {
     color: #FFD700;
 }
 
+.nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: 10px;
+}
+
 .btn-login {
     background: linear-gradient(135deg, #2A6B2A, #1a4a1a);
     color: #FFD700 !important;
-    padding: 8px 20px;
+    padding: 8px 24px;
     border-radius: 8px;
     font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(42, 107, 42, 0.4);
 }
 
 .btn-signup {
     border: 1px solid #FFD700;
-    padding: 8px 20px;
+    padding: 8px 24px;
     border-radius: 8px;
     font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-signup:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 /* Container principal */
@@ -453,12 +472,18 @@ body {
 /* Tablets */
 @media (max-width: 768px) {
     .navbar {
+        padding: 15px 20px;
         flex-direction: column;
         text-align: center;
     }
     
     .nav-links {
         justify-content: center;
+        gap: 15px;
+    }
+    
+    .nav-buttons {
+        margin-left: 0;
     }
     
     .hero-title {
@@ -496,6 +521,14 @@ body {
     
     .logo span {
         font-size: 0.7rem;
+    }
+    
+    .nav-links {
+        gap: 10px;
+    }
+    
+    .nav-links a {
+        font-size: 0.85rem;
     }
     
     .btn-login, .btn-signup {
