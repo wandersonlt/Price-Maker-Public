@@ -1,1 +1,207 @@
-const API_URL='https://precificador-pro-2k2v.onrender.com';localStorage.removeItem('precificador_token'),localStorage.removeItem('precificador_usuario'),localStorage.removeItem('precificador_email');function abrirModal(){document.getElementById('modalAuth').style.display='flex',switchTab('login'),document.getElementById('recuperarPane').style.display='none',document.getElementById('loginPane').style.display='block',document.getElementById('signupPane').style.display='none',document.getElementById('errorMessage').style.display='none',document.getElementById('successMessage').style.display='none',limparCampos()}function abrirModalCadastro(){document.getElementById('modalAuth').style.display='flex',switchTab('signup'),document.getElementById('recuperarPane').style.display='none',document.getElementById('errorMessage').style.display='none',document.getElementById('successMessage').style.display='none',limparCampos()}function limparCampos(){const e=['loginEmail','loginSenha','signupNome','signupEmail','signupSenha','signupConfirmar','recuperarEmail'];e.forEach(e=>{const t=document.getElementById(e);t&&(t.value='')})}function fecharModal(){document.getElementById('modalAuth').style.display='none'}function switchTab(e){const t=document.getElementById('loginPane'),n=document.getElementById('signupPane'),o=document.querySelectorAll('.tab-btn')[0],i=document.querySelectorAll('.tab-btn')[1];e==='login'?(t&&(t.style.display='block'),n&&(n.style.display='none'),o&&o.classList.add('active'),i&&i.classList.remove('active')):(t&&(t.style.display='none'),n&&(n.style.display='block'),o&&o.classList.remove('active'),i&&i.classList.add('active')),document.getElementById('errorMessage').style.display='none',document.getElementById('successMessage').style.display='none'}function mostrarRecuperar(){document.getElementById('loginPane').style.display='none',document.getElementById('signupPane').style.display='none',document.getElementById('recuperarPane').style.display='block'}function voltarLogin(){document.getElementById('recuperarPane').style.display='none',document.getElementById('loginPane').style.display='block'}function mostrarMensagem(e,t){const n=document.getElementById(e==='erro'?'errorMessage':'successMessage');n&&(n.innerHTML=t,n.style.display='block',setTimeout(()=>{n.style.display='none'},5e3))}async function fazerLogin(){const e=document.getElementById('loginEmail').value,t=document.getElementById('loginSenha').value;if(!e||!t)return mostrarMensagem('erro','Preencha todos os campos!');mostrarMensagem('sucesso','Verificando...');try{const n=await fetch(`${API_URL}/api/login-direto`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,senha:t})}),o=await n.json();o.sucesso?(mostrarMensagem('sucesso','Login realizado! Redirecionando...'),setTimeout(()=>{window.location.href=`${API_URL}/`},1500)):mostrarMensagem('erro',o.mensagem)}catch(e){mostrarMensagem('erro','Erro ao conectar')}}async function fazerCadastro(){const e=document.getElementById('signupNome').value,t=document.getElementById('signupEmail').value,n=document.getElementById('signupSenha').value,o=document.getElementById('signupConfirmar').value;if(!t||!n)return mostrarMensagem('erro','Preencha todos os campos!');if(n!==o)return mostrarMensagem('erro','As senhas não coincidem!');if(n.length<6)return mostrarMensagem('erro','A senha deve ter pelo menos 6 caracteres!');mostrarMensagem('sucesso','Criando conta...');try{const i=await fetch(`${API_URL}/api/cadastro-direto`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:e,email:t,senha:n})}),a=await i.json();a.sucesso?(mostrarMensagem('sucesso','Cadastro realizado! Faça login.'),setTimeout(()=>{switchTab('login'),document.getElementById('loginEmail').value=t,limparCampos()},2e3)):mostrarMensagem('erro',a.mensagem)}catch(e){mostrarMensagem('erro','Erro ao conectar')}}async function enviarRecuperacao(){const e=document.getElementById('recuperarEmail').value;if(!e)return mostrarMensagem('erro','Digite seu email!');mostrarMensagem('sucesso','Enviando...');try{const t=await fetch(`${API_URL}/api/recuperar-senha`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e})}),n=await t.json();n.sucesso?(mostrarMensagem('sucesso',n.mensagem),setTimeout(()=>{voltarLogin()},3e3)):mostrarMensagem('erro',n.mensagem)}catch(e){mostrarMensagem('erro','Erro ao enviar')}}window.onclick=function(e){e.target.classList.contains('modal')&&fecharModal()};
+const API_URL = 'https://precificador-pro-2k2v.onrender.com';
+
+function abrirModal() {
+    document.getElementById('modalAuth').style.display = 'flex';
+    switchTab('login');
+    document.getElementById('recuperarPane').style.display = 'none';
+    document.getElementById('loginPane').style.display = 'block';
+    document.getElementById('signupPane').style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+    limparCampos();
+}
+
+function abrirModalCadastro() {
+    document.getElementById('modalAuth').style.display = 'flex';
+    switchTab('signup');
+    document.getElementById('recuperarPane').style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+    limparCampos();
+}
+
+function limparCampos() {
+    const campos = ['loginEmail', 'loginSenha', 'signupNome', 'signupEmail', 'signupSenha', 'signupConfirmar', 'recuperarEmail'];
+    campos.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+}
+
+function fecharModal() {
+    document.getElementById('modalAuth').style.display = 'none';
+}
+
+function switchTab(tab) {
+    const loginPane = document.getElementById('loginPane');
+    const signupPane = document.getElementById('signupPane');
+    const loginBtn = document.querySelectorAll('.tab-btn')[0];
+    const signupBtn = document.querySelectorAll('.tab-btn')[1];
+    
+    if (tab === 'login') {
+        if (loginPane) loginPane.style.display = 'block';
+        if (signupPane) signupPane.style.display = 'none';
+        if (loginBtn) loginBtn.classList.add('active');
+        if (signupBtn) signupBtn.classList.remove('active');
+    } else {
+        if (loginPane) loginPane.style.display = 'none';
+        if (signupPane) signupPane.style.display = 'block';
+        if (loginBtn) loginBtn.classList.remove('active');
+        if (signupBtn) signupBtn.classList.add('active');
+    }
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+}
+
+function mostrarRecuperar() {
+    document.getElementById('loginPane').style.display = 'none';
+    document.getElementById('signupPane').style.display = 'none';
+    document.getElementById('recuperarPane').style.display = 'block';
+}
+
+function voltarLogin() {
+    document.getElementById('recuperarPane').style.display = 'none';
+    document.getElementById('loginPane').style.display = 'block';
+}
+
+function mostrarMensagem(tipo, mensagem) {
+    const element = document.getElementById(tipo === 'erro' ? 'errorMessage' : 'successMessage');
+    if (element) {
+        element.innerHTML = mensagem;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 5000);
+    }
+}
+
+async function fazerLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const senha = document.getElementById('loginSenha').value;
+
+    if (!email || !senha) {
+        mostrarMensagem('erro', 'Preencha todos os campos!');
+        return;
+    }
+
+    mostrarMensagem('sucesso', 'Verificando dados...');
+
+    try {
+        const response = await fetch(`${API_URL}/api/login-direto`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ email, senha })
+        });
+
+        const data = await response.json();
+        
+        if (data.sucesso) {
+            mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
+            setTimeout(() => {
+                window.location.href = data.redirect || API_URL;
+            }, 1500);
+        } else {
+            mostrarMensagem('erro', data.mensagem);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarMensagem('erro', 'Erro ao conectar ao servidor. Tente novamente.');
+    }
+}
+
+async function fazerCadastro() {
+    const nome = document.getElementById('signupNome').value;
+    const email = document.getElementById('signupEmail').value;
+    const senha = document.getElementById('signupSenha').value;
+    const confirmar = document.getElementById('signupConfirmar').value;
+
+    if (!email || !senha) {
+        mostrarMensagem('erro', 'Preencha todos os campos!');
+        return;
+    }
+
+    if (senha !== confirmar) {
+        mostrarMensagem('erro', 'As senhas não coincidem!');
+        return;
+    }
+
+    if (senha.length < 6) {
+        mostrarMensagem('erro', 'A senha deve ter pelo menos 6 caracteres!');
+        return;
+    }
+
+    mostrarMensagem('sucesso', 'Criando conta...');
+
+    try {
+        const response = await fetch(`${API_URL}/api/cadastro-direto`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ nome, email, senha })
+        });
+
+        const data = await response.json();
+        
+        if (data.sucesso) {
+            mostrarMensagem('sucesso', 'Cadastro realizado! Faça login.');
+            setTimeout(() => {
+                switchTab('login');
+                document.getElementById('loginEmail').value = email;
+                document.getElementById('loginSenha').value = '';
+                limparCampos();
+            }, 2000);
+        } else {
+            mostrarMensagem('erro', data.mensagem);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarMensagem('erro', 'Erro ao conectar ao servidor.');
+    }
+}
+
+async function enviarRecuperacao() {
+    const email = document.getElementById('recuperarEmail').value;
+
+    if (!email) {
+        mostrarMensagem('erro', 'Digite seu email!');
+        return;
+    }
+
+    mostrarMensagem('sucesso', 'Enviando...');
+
+    try {
+        const response = await fetch(`${API_URL}/api/recuperar-senha`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        
+        if (data.sucesso) {
+            mostrarMensagem('sucesso', data.mensagem);
+            setTimeout(() => {
+                voltarLogin();
+            }, 3000);
+        } else {
+            mostrarMensagem('erro', data.mensagem);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarMensagem('erro', 'Erro ao enviar solicitação');
+    }
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        fecharModal();
+    }
+};
