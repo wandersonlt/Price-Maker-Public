@@ -100,8 +100,9 @@ async function fazerLogin() {
         
         if (data.sucesso) {
             mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
+            // Recarregar a página para o backend
             setTimeout(() => {
-                window.location.href = data.redirect || API_URL;
+                window.location.href = API_URL;
             }, 1500);
         } else {
             mostrarMensagem('erro', data.mensagem);
