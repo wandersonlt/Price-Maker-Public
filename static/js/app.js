@@ -1,4 +1,4 @@
-// static/js/app.js - JavaScript da página pública
+// public/static/js/app.js - JavaScript da página pública
 
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
@@ -100,12 +100,8 @@ async function fazerLogin() {
         const data = await response.json();
         
         if (data.sucesso) {
-            // Salvar token no localStorage
             localStorage.setItem('precificador_token', data.token);
-            
             mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
-            
-            // Redirecionar com token na URL
             setTimeout(() => {
                 window.location.href = `${API_URL}/?token=${data.token}`;
             }, 1500);
