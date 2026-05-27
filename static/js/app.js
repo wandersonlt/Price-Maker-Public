@@ -1,6 +1,5 @@
 // static/js/app.js - JavaScript da página pública
 
-// URL do seu backend no Render
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
 function abrirModal() {
@@ -24,21 +23,11 @@ function abrirModalCadastro() {
 }
 
 function limparCampos() {
-    const loginEmail = document.getElementById('loginEmail');
-    const loginSenha = document.getElementById('loginSenha');
-    const signupNome = document.getElementById('signupNome');
-    const signupEmail = document.getElementById('signupEmail');
-    const signupSenha = document.getElementById('signupSenha');
-    const signupConfirmar = document.getElementById('signupConfirmar');
-    const recuperarEmail = document.getElementById('recuperarEmail');
-    
-    if (loginEmail) loginEmail.value = '';
-    if (loginSenha) loginSenha.value = '';
-    if (signupNome) signupNome.value = '';
-    if (signupEmail) signupEmail.value = '';
-    if (signupSenha) signupSenha.value = '';
-    if (signupConfirmar) signupConfirmar.value = '';
-    if (recuperarEmail) recuperarEmail.value = '';
+    const campos = ['loginEmail', 'loginSenha', 'signupNome', 'signupEmail', 'signupSenha', 'signupConfirmar', 'recuperarEmail'];
+    campos.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
 }
 
 function fecharModal() {
@@ -62,45 +51,27 @@ function switchTab(tab) {
         if (loginBtn) loginBtn.classList.remove('active');
         if (signupBtn) signupBtn.classList.add('active');
     }
-    
-    const errorDiv = document.getElementById('errorMessage');
-    const successDiv = document.getElementById('successMessage');
-    if (errorDiv) errorDiv.style.display = 'none';
-    if (successDiv) successDiv.style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
 }
 
 function mostrarRecuperar() {
     document.getElementById('loginPane').style.display = 'none';
     document.getElementById('signupPane').style.display = 'none';
     document.getElementById('recuperarPane').style.display = 'block';
-    document.getElementById('errorMessage').style.display = 'none';
 }
 
 function voltarLogin() {
     document.getElementById('recuperarPane').style.display = 'none';
     document.getElementById('loginPane').style.display = 'block';
-    document.getElementById('errorMessage').style.display = 'none';
 }
 
-function mostrarErro(mensagem) {
-    const errorDiv = document.getElementById('errorMessage');
-    if (errorDiv) {
-        errorDiv.innerHTML = mensagem;
-        errorDiv.style.display = 'block';
-        setTimeout(() => {
-            errorDiv.style.display = 'none';
-        }, 5000);
-    }
-}
-
-function mostrarSucesso(mensagem) {
-    const successDiv = document.getElementById('successMessage');
-    if (successDiv) {
-        successDiv.innerHTML = mensagem;
-        successDiv.style.display = 'block';
-        setTimeout(() => {
-            successDiv.style.display = 'none';
-        }, 5000);
+function mostrarMensagem(tipo, mensagem) {
+    const element = document.getElementById(tipo === 'erro' ? 'errorMessage' : 'successMessage');
+    if (element) {
+        element.innerHTML = mensagem;
+        element.style.display = 'block';
+        setTimeout(() => { element.style.display = 'none'; }, 5000);
     }
 }
 
@@ -109,18 +80,16 @@ async function fazerLogin() {
     const senha = document.getElementById('loginSenha').value;
 
     if (!email || !senha) {
-        mostrarErro('Preencha todos os campos!');
+        mostrarMensagem('erro', 'Preencha todos os campos!');
         return;
     }
 
-    mostrarSucesso('Verificando dados...');
+    mostrarMensagem('sucesso', 'Verificando dados...');
 
     try {
         const response = await fetch(`${API_URL}/api/login-direto`, {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, senha })
         });
 
@@ -131,17 +100,15 @@ async function fazerLogin() {
             localStorage.setItem('precificador_usuario', data.usuario_id);
             localStorage.setItem('precificador_email', email);
             
-            mostrarSucesso('Login realizado! Redirecionando...');
-            
+            mostrarMensagem('sucesso', 'Login realizado! Redirecionando...');
             setTimeout(() => {
                 window.location.href = `${API_URL}/dashboard?token=${data.token}`;
             }, 1500);
         } else {
-            mostrarErro(data.mensagem);
+            mostrarMensagem('erro', data.mensagem);
         }
     } catch (error) {
-        console.error('Erro:', error);
-        mostrarErro('Erro ao conectar ao servidor. Tente novamente.');
+        mostrarMensagem('erro', 'Erro ao conectar ao servidor. Tente novamente.');
     }
 }
 
@@ -152,49 +119,43 @@ async function fazerCadastro() {
     const confirmar = document.getElementById('signupConfirmar').value;
 
     if (!email || !senha) {
-        mostrarErro('Preencha todos os campos!');
+        mostrarMensagem('erro', 'Preencha todos os campos!');
         return;
     }
 
     if (senha !== confirmar) {
-        mostrarErro('As senhas não coincidem!');
+        mostrarMensagem('erro', 'As senhas não coincidem!');
         return;
     }
 
     if (senha.length < 6) {
-        mostrarErro('A senha deve ter pelo menos 6 caracteres!');
+        mostrarMensagem('erro', 'A senha deve ter pelo menos 6 caracteres!');
         return;
     }
 
-    mostrarSucesso('Criando conta...');
+    mostrarMensagem('sucesso', 'Criando conta...');
 
     try {
         const response = await fetch(`${API_URL}/api/cadastro-direto`, {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, email, senha })
         });
 
         const data = await response.json();
         
         if (data.sucesso) {
-            mostrarSucesso('Cadastro realizado com sucesso! Faça login.');
+            mostrarMensagem('sucesso', 'Cadastro realizado! Faça login.');
             setTimeout(() => {
                 switchTab('login');
-                const loginEmail = document.getElementById('loginEmail');
-                if (loginEmail) loginEmail.value = email;
-                const loginSenha = document.getElementById('loginSenha');
-                if (loginSenha) loginSenha.value = '';
+                document.getElementById('loginEmail').value = email;
                 limparCampos();
             }, 2000);
         } else {
-            mostrarErro(data.mensagem);
+            mostrarMensagem('erro', data.mensagem);
         }
     } catch (error) {
-        console.error('Erro:', error);
-        mostrarErro('Erro ao conectar ao servidor. Tente novamente.');
+        mostrarMensagem('erro', 'Erro ao conectar ao servidor.');
     }
 }
 
@@ -202,11 +163,11 @@ async function enviarRecuperacao() {
     const email = document.getElementById('recuperarEmail').value;
 
     if (!email) {
-        mostrarErro('Digite seu email!');
+        mostrarMensagem('erro', 'Digite seu email!');
         return;
     }
 
-    mostrarSucesso('Enviando...');
+    mostrarMensagem('sucesso', 'Enviando...');
 
     try {
         const response = await fetch(`${API_URL}/api/recuperar-senha`, {
@@ -218,28 +179,39 @@ async function enviarRecuperacao() {
         const data = await response.json();
         
         if (data.sucesso) {
-            mostrarSucesso(data.mensagem);
-            setTimeout(() => {
-                voltarLogin();
-            }, 3000);
+            mostrarMensagem('sucesso', data.mensagem);
+            setTimeout(() => voltarLogin(), 3000);
         } else {
-            mostrarErro(data.mensagem);
+            mostrarMensagem('erro', data.mensagem);
+        }
+    } catch (error) {
+        mostrarMensagem('erro', 'Erro ao enviar solicitação');
+    }
+}
+
+async function verificarSessao() {
+    try {
+        const response = await fetch(`${API_URL}/api/verificar-sessao`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.logado) {
+            const token = localStorage.getItem('precificador_token');
+            window.location.href = `${API_URL}/dashboard?token=${token}`;
         }
     } catch (error) {
         console.error('Erro:', error);
-        mostrarErro('Erro ao enviar solicitação');
     }
 }
 
-// Verificar se já está logado
 const token = localStorage.getItem('precificador_token');
 if (token) {
     window.location.href = `${API_URL}/dashboard?token=${token}`;
+} else {
+    verificarSessao();
 }
 
-// Fechar modal ao clicar fora
 window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        fecharModal();
-    }
+    if (event.target.classList.contains('modal')) fecharModal();
 };
