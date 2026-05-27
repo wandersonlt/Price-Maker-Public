@@ -1,11 +1,6 @@
-// static/js/app.js - JavaScript da página pública
+// static/js/app.js
 
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
-
-// Limpar qualquer token antigo ao carregar
-localStorage.removeItem('precificador_token');
-localStorage.removeItem('precificador_usuario');
-localStorage.removeItem('precificador_email');
 
 function abrirModal() {
     document.getElementById('modalAuth').style.display = 'flex';
@@ -95,6 +90,7 @@ async function fazerLogin() {
         const response = await fetch(`${API_URL}/api/login-direto`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ email, senha })
         });
 
@@ -109,6 +105,7 @@ async function fazerLogin() {
             mostrarMensagem('erro', data.mensagem);
         }
     } catch (error) {
+        console.error('Erro:', error);
         mostrarMensagem('erro', 'Erro ao conectar ao servidor. Tente novamente.');
     }
 }
@@ -156,6 +153,7 @@ async function fazerCadastro() {
             mostrarMensagem('erro', data.mensagem);
         }
     } catch (error) {
+        console.error('Erro:', error);
         mostrarMensagem('erro', 'Erro ao conectar ao servidor.');
     }
 }
@@ -186,11 +184,11 @@ async function enviarRecuperacao() {
             mostrarMensagem('erro', data.mensagem);
         }
     } catch (error) {
+        console.error('Erro:', error);
         mostrarMensagem('erro', 'Erro ao enviar solicitação');
     }
 }
 
-// Fechar modal ao clicar fora
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) fecharModal();
 };
