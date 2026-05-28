@@ -635,3 +635,25 @@ body {
         font-size: 16px;
     }
 }
+
+/* public/static/css/style.css - Adicionar no final */
+
+/* Estilos para inputs - seleção automática */
+input, select, textarea {
+    cursor: pointer;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #FFD700;
+}
+
+/* Melhorias para inputs numéricos */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 0.5;
+}

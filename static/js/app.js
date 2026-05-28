@@ -2,6 +2,26 @@
 
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
+// ==================== FUNÇÃO PARA SELECIONAR TEXTO AO CLICAR ====================
+function setupAutoSelectOnClick() {
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('click', function() {
+            if (this.type === 'number' || this.type === 'text' || this.type === 'email' || this.type === 'password') {
+                this.select();
+            }
+        });
+        
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.blur();
+                const event = new Event('change', { bubbles: true });
+                this.dispatchEvent(event);
+            }
+        });
+    });
+}
+
 function abrirModal() {
     document.getElementById('modalAuth').style.display = 'flex';
     switchTab('login');
