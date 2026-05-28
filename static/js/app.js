@@ -1,17 +1,16 @@
-// public/static/js/app.js - JavaScript da página pública
+// public/static/js/app.js - Landing Page com recuperação por email
 
 const API_URL = 'https://precificador-pro-2k2v.onrender.com';
 
 // ==================== FUNÇÃO PARA SELECIONAR TEXTO AO CLICAR ====================
 function setupAutoSelectOnClick() {
-    const inputs = document.querySelectorAll('input, select');
+    const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
         input.addEventListener('click', function() {
             if (this.type === 'number' || this.type === 'text' || this.type === 'email' || this.type === 'password') {
                 this.select();
             }
         });
-        
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 this.blur();
@@ -22,6 +21,7 @@ function setupAutoSelectOnClick() {
     });
 }
 
+// ==================== MODAL ====================
 function abrirModal() {
     document.getElementById('modalAuth').style.display = 'flex';
     switchTab('login');
@@ -97,6 +97,7 @@ function mostrarMensagem(tipo, mensagem) {
     }
 }
 
+// ==================== LOGIN E CADASTRO ====================
 async function fazerLogin() {
     const email = document.getElementById('loginEmail').value;
     const senha = document.getElementById('loginSenha').value;
@@ -185,6 +186,7 @@ async function fazerCadastro() {
     }
 }
 
+// ==================== RECUPERAR SENHA (SEGURA - ENVIA POR EMAIL) ====================
 async function enviarRecuperacao() {
     const email = document.getElementById('recuperarEmail').value;
 
@@ -193,7 +195,7 @@ async function enviarRecuperacao() {
         return;
     }
 
-    mostrarMensagem('sucesso', 'Enviando...');
+    mostrarMensagem('sucesso', 'Enviando solicitação...');
 
     try {
         const response = await fetch(`${API_URL}/api/recuperar-senha`, {
@@ -201,6 +203,7 @@ async function enviarRecuperacao() {
             headers: { 
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({ email })
         });
 
@@ -210,6 +213,7 @@ async function enviarRecuperacao() {
             mostrarMensagem('sucesso', data.mensagem);
             setTimeout(() => {
                 voltarLogin();
+                document.getElementById('loginEmail').value = email;
             }, 3000);
         } else {
             mostrarMensagem('erro', data.mensagem);
@@ -220,8 +224,12 @@ async function enviarRecuperacao() {
     }
 }
 
+// ==================== FECHAR MODAL AO CLICAR FORA ====================
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         fecharModal();
     }
 };
+
+// ==================== INICIALIZAR ====================
+setupAutoSelectOnClick();
